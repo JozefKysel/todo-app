@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { addTodo,  getCompleted} from '../../redux/actions/todoActions';
+import './navbar.css';
 import { connect } from 'react-redux';
 
 const Navbar = (props) => {
@@ -10,6 +11,7 @@ const Navbar = (props) => {
     e.preventDefault();
     if (todoText.trim()) {
       props.addTodo(todoText);
+      setTodoText('');
     } else {
       alert('Please provide some input');
     }
@@ -19,12 +21,15 @@ const Navbar = (props) => {
   const handleInput = e => setTodoText(e.target.value);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type='text' onChange={handleInput} placeholder='What to do?'/>
-        <input type='submit'/>
-      </form>
-      <button onClick={getCompletedTodos}>Get completed</button>
+    <div className='navbar-container'>
+      <h3 className='logo'>TODO APP</h3>
+      <div className='input'>
+        <form className='add-form' onSubmit={handleSubmit}>
+          <input className='input-field' type='text' onChange={handleInput} placeholder='What to do?'/>
+          <input className='input-field' type='submit'/>
+        </form>
+        <button className='input-field' onClick={getCompletedTodos}>Get completed</button>
+      </div>
     </div>
   );
 }

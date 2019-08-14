@@ -11,16 +11,10 @@ const Dashboard = (props) => {
   }, []);
 
   return (
-    <div>
-      <TodoList todos={props.todos}/>
+    <div className='list'>
+      <TodoList/>
     </div>
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    todos: state.todos.todos
-  }
-}
-
-export default connect(mapStateToProps, { fetchTodos })(Dashboard);
+export default connect(null, { fetchTodos })(Dashboard);

@@ -1,9 +1,9 @@
-import { GET_TODOS, ADD_TODO, GET_COMPLETED, UPDATE_TEXT, DELETE_TODO, COMPLETE_TODO, INCOMPLETE_TODO } from './types';
+import { GET_TODOS, ADD_TODO, GET_COMPLETED, UPDATE_TEXT, DELETE_TODO, TOGGLE_COMPLETION } from './types';
 
-const urlToFetch = 'http://localhost:8080/todos';
+const urlToFetchFrom = 'http://localhost:8080/todos';
 
 export const fetchTodos = () => dispatch =>
-  fetch(urlToFetch)
+  fetch(urlToFetchFrom)
     .then(res => res.json())
     .then(todos => dispatch({
       type: GET_TODOS,
@@ -11,7 +11,7 @@ export const fetchTodos = () => dispatch =>
     }));
 
 export const addTodo = text => dispatch =>
-  fetch(urlToFetch, {
+  fetch(urlToFetchFrom, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ export const addTodo = text => dispatch =>
     }));
 
 export const getCompleted = () => dispatch =>
-  fetch(`${urlToFetch}/completed`)
+  fetch(`${urlToFetchFrom}/completed`)
   .then(res => res.json())
   .then(todos => dispatch({
     type: GET_COMPLETED,
@@ -35,7 +35,7 @@ export const getCompleted = () => dispatch =>
   }));
 
 export const updateText = (id, text) => dispatch =>
-fetch(`${urlToFetch}/${id}`, {
+fetch(`${urlToFetchFrom}/${id}`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -45,22 +45,27 @@ fetch(`${urlToFetch}/${id}`, {
   })
 })
   .then(res => res.json())
-  .then(todo => dispatch({
+  .then(todo => {
+    return dispatch({
     type: UPDATE_TEXT,
     data: todo
+  })});
+
+export const deleteTodo = id => dispatch =>
+  fetch(`${urlToFetchFrom}/${id}`, {
+    method: 'DELETE'
+  }).then(todo => dispatch({
+      type: DELETE_TODO,
+      data: id
+    }
+  ));
+
+export const toggleTodo = todo => dispatch =>
+  fetch(`${urlToFetchFrom}/${todo.id}/${todo.completed ? 'incomplete' : 'complete'}`, {
+    method: 'POST',
+  })
+  .then(res => res.json())
+  .then(res => dispatch({
+    type: TOGGLE_COMPLETION,
+    data: res
   }));
-
-export const deleteTodo = id => ({
-  type: DELETE_TODO,
-  data: id
-});
-
-export const completeTodo = id => ({
-  type: COMPLETE_TODO,
-  data: id
-});
-
-export const incompleteTodo = id => ({
-  type: INCOMPLETE_TODO,
-  data: id
-});
