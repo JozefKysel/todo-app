@@ -1,4 +1,4 @@
-import { GET_TODOS, ADD_TODO, GET_COMPLETED, UPDATE_TEXT, DELETE_TODO, TOGGLE_COMPLETION } from './types';
+import { GET_TODOS, ADD_TODO, GET_COMPLETED, GET_INCOMPLETED, UPDATE_TEXT, DELETE_TODO, TOGGLE_COMPLETION } from './types';
 
 const urlToFetchFrom = 'http://localhost:8080/todos';
 
@@ -25,14 +25,6 @@ export const addTodo = text => dispatch =>
       type: ADD_TODO,
       data: todo
     }));
-
-export const getCompleted = () => dispatch =>
-  fetch(`${urlToFetchFrom}/completed`)
-  .then(res => res.json())
-  .then(todos => dispatch({
-    type: GET_COMPLETED,
-    data: todos
-  }));
 
 export const updateText = (id, text) => dispatch =>
 fetch(`${urlToFetchFrom}/${id}`, {
@@ -69,3 +61,14 @@ export const toggleTodo = todo => dispatch =>
     type: TOGGLE_COMPLETION,
     data: res
   }));
+
+// as i had only enpoint for completed todos I decided to to it like this with sync actions
+export const getCompleted = complete => ({
+  type: GET_COMPLETED,
+  data: complete
+});
+
+export const getIncompleted = incomplete => ({
+  type: GET_INCOMPLETED,
+  data: incomplete
+});
