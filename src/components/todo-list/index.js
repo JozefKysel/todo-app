@@ -11,28 +11,33 @@ const TodoList = (props) => {
   }, []);
 
   const todoList = [];
-  if (props.filterTodos === 'ALL') todoList.push(...props.todos);
-  else if (props.filterTodos === 'COMPLETE') todoList.push(...props.completed);
-  else todoList.push(...props.incompleted);
+
+  if (props.filterTodos === 'COMPLETE') {
+    todoList.push(...props.completed);
+  }
+  else if (props.filterTodos === 'INCOMPLETE') {
+    todoList.push(...props.incompleted);
+  }
+  else {
+    todoList.push(...props.todos);
+  }
 
   return (
     <div className='list-container'>
+      <h4>Completed: {props.todos.filter(todo => todo.completed === true).length}</h4>
       {todoList.length > 0 ? todoList.map(todo => (
       <div className='list' key={todo.id}>
         <TodoItem todo={todo}/>
-      </div>)
-    ) : (<div>You have nothing to do </div>)}
+      </div>)) : (<div>You have nothing to do </div>)}
     </div>
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    todos: state.todos.todos,
-    completed: state.todos.completed,
-    incompleted: state.todos.incompleted,
-    filterTodos: state.todos.filterTodos
-  }
-}
+const mapStateToProps = state => ({
+  todos: state.todos.todos,
+  completed: state.todos.completed,
+  incompleted: state.todos.incompleted,
+  filterTodos: state.todos.filterTodos
+});
 
 export default connect(mapStateToProps, { fetchTodos })(TodoList);

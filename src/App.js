@@ -4,6 +4,11 @@ import { Navbar, TodoList } from './components';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
+// todo
+// - error handling
+// - mark all as completed
+// - delete all completed
+
 function App() {
   return (
     <Provider store={store}>

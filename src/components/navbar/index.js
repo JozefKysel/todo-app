@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addTodo,  getCompleted, getIncompleted } from '../../redux/actions/todoActions';
+import { addTodo,  getCompleted, getIncompleted, deleteCompleted, allAsCompleted } from '../../redux/actions/todoActions';
 import './navbar.css';
 import { connect } from 'react-redux';
 
@@ -19,6 +19,8 @@ const Navbar = (props) => {
 
   const getCompletedTodos = () => props.getCompleted('COMPLETE');
   const getIncompletedTodos = () => props.getIncompleted('INCOMPLETE');
+  const deleteCompletedTodos = () => props.deleteCompleted(props.todos);
+  const allAsCompletedTodos = () => props.allAsCompleted(props.todos);
   const handleInput = e => setTodoText(e.target.value);
 
   return (
@@ -31,11 +33,20 @@ const Navbar = (props) => {
         </form>
         <button className='input-field' onClick={getCompletedTodos}>Completed</button>
         <button className='input-field' onClick={getIncompletedTodos}>To Complete</button>
-        <button className='input-field' onClick={getIncompletedTodos}>Mark all as completed</button>
-        <button className='input-field' onClick={getIncompletedTodos}>Delete all completed</button>
+        <button className='input-field' onClick={allAsCompletedTodos}>Mark all as completed</button>
+        <button className='input-field' onClick={deleteCompletedTodos}>Delete all completed</button>
       </div>
     </div>
   );
 }
 
-export default connect(null, { addTodo, getCompleted, getIncompleted })(Navbar);
+const mapStateToProps = state => {
+  return {
+    todos: state.todos.todos,
+    completed: state.todos.completed,
+    incompleted: state.todos.incompleted,
+    filterTodos: state.todos.filterTodos
+  }
+}
+
+export default connect(mapStateToProps, { addTodo, getCompleted, getIncompleted, deleteCompleted, allAsCompleted })(Navbar);
