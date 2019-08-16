@@ -1,14 +1,23 @@
 import { GET_TODOS, ADD_TODO, GET_COMPLETED, GET_INCOMPLETED, UPDATE_TEXT, DELETE_TODO, TOGGLE_COMPLETION, DELETE_COMPLETED, ALL_AS_COMPLETED } from './types';
-
+import { handleErrors } from './utility';
 const urlToFetchFrom = 'http://localhost:8080/todos';
 
 export const fetchTodos = () => dispatch =>
   fetch(urlToFetchFrom)
-    .then(res => res.json())
-    .then(todos => dispatch({
-      type: GET_TODOS,
-      data: todos
-    }));
+    .then(res => {
+      if (res.status >= 400) {
+        throw res;
+      } else {
+        return res.json();
+      }
+    })
+    .then(
+      todos => dispatch({
+        type: GET_TODOS,
+        data: todos
+      }),
+      error => handleErrors(dispatch, error)
+    );
 
 export const addTodo = text => dispatch =>
   fetch(urlToFetchFrom, {
@@ -20,11 +29,20 @@ export const addTodo = text => dispatch =>
       text
     })
   })
-    .then(res => res.json())
-    .then(todo => dispatch({
-      type: ADD_TODO,
-      data: todo
-    }));
+    .then(res => {
+      if (res.status >= 400) {
+        throw res;
+      } else {
+        return res.json();
+      }
+    })
+    .then(
+      todo => dispatch({
+        type: ADD_TODO,
+        data: todo
+      }),
+      error => handleErrors(dispatch, error)
+  );
 
 export const updateText = (id, text) => dispatch =>
 fetch(`${urlToFetchFrom}/${id}`, {
@@ -36,39 +54,67 @@ fetch(`${urlToFetchFrom}/${id}`, {
     text
   })
 })
-  .then(res => res.json())
-  .then(todo => {
-    return dispatch({
-    type: UPDATE_TEXT,
-    data: todo
-  })});
+  .then(res => {
+    if (res.status >= 400) {
+      throw res;
+    } else {
+      return res.json();
+    }
+  })
+  .then(todo =>
+    dispatch({
+      type: UPDATE_TEXT,
+      data: todo
+    }),
+    error => handleErrors(dispatch, error)
+  );
 
 export const deleteTodo = id => dispatch =>
   fetch(`${urlToFetchFrom}/${id}`, {
     method: 'DELETE'
   })
-    .then(todo => dispatch({
-      type: DELETE_TODO,
-      data: id
+    .then(
+      res => {
+        if (res.status >= 400) {
+          return handleErrors(dispatch, res);
+        } else {
+          return dispatch({
+          type: DELETE_TODO,
+          data: id
+        })
+      }
     }
-  ));
+  );
 
 export const toggleTodo = todo => dispatch =>
   fetch(`${urlToFetchFrom}/${todo.id}/${todo.completed ? 'incomplete' : 'complete'}`, {
     method: 'POST',
   })
-    .then(res => res.json())
-    .then(res => dispatch({
-      type: TOGGLE_COMPLETION,
-      data: res
-    }));
+    .then(res => {
+      if (res.status >= 400) {
+        throw res;
+      } else {
+        return res.json();
+      }
+    })
+    .then(
+      res => dispatch({
+        type: TOGGLE_COMPLETION,
+        data: res
+      }),
+      error => handleErrors(dispatch, error)
+    );
 
 export const deleteCompleted = todos => dispatch => {
   todos.filter(todo => todo.completed === true).forEach(todo => {
     fetch(`${urlToFetchFrom}/${todo.id}`, {
       method: 'DELETE'
+    }).then(res => {
+      if (res.status >= 400) {
+        return handleErrors(dispatch, res);
+      }
     })
-  })
+  });
   return dispatch ({
     type: DELETE_COMPLETED,
     data: todos
@@ -80,8 +126,17 @@ export const allAsCompleted = todos => dispatch => {
     fetch(`${urlToFetchFrom}/${todo.id}/complete`, {
       method: 'POST'
     })
-      .then(res => res.json())
-      .then(res => todo.completed = res.completed)
+      .then(res => {
+        if (res.status >= 400) {
+          throw res;
+        } else {
+          return res.json();
+        }
+      })
+      .then(
+        res => todo.completed = res.completed,
+        error => handleErrors(dispatch, error)
+      );
       return todo;
   })
   return dispatch ({

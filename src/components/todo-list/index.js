@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import './todo-list.css';
-import { TodoItem } from '../';
+import { TodoItem, FetchError } from '../';
 import { connect } from 'react-redux';
 import { fetchTodos } from '../../redux/actions/todoActions';
 
 const TodoList = (props) => {
-
   useEffect(() => {
     props.fetchTodos();
   }, []);
@@ -20,6 +19,12 @@ const TodoList = (props) => {
   }
   else {
     todoList.push(...props.todos);
+  }
+
+  if (props.errors) {
+    return (
+      <FetchError error={props.errors}/>
+    );
   }
 
   return (
@@ -37,7 +42,8 @@ const mapStateToProps = state => ({
   todos: state.todos.todos,
   completed: state.todos.completed,
   incompleted: state.todos.incompleted,
-  filterTodos: state.todos.filterTodos
+  filterTodos: state.todos.filterTodos,
+  errors: state.errors.errors
 });
 
 export default connect(mapStateToProps, { fetchTodos })(TodoList);

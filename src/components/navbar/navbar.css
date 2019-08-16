@@ -28,6 +28,8 @@
 
 .input-field {
   height: 50%;
+  width: 10vw;
+  font-size: 65%;
   align-self: center;
   border-radius: 7.5px;
   margin: 2%%;

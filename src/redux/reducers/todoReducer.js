@@ -4,7 +4,7 @@ export const initialState = {
   todos: [],
   completed: [],
   incompleted: [],
-  errors: [],
+  errors: null,
   filterTodos: 'ALL'
 }
 
@@ -69,16 +69,20 @@ const todoReducer = (state = initialState, action) => {
   }
 }
 
-const errorReducer = (state = initialState, action) => {
+const errorReducer = (state = null, action) => {
   switch (action.type) {
     case CATCH_ERROR:
-      console.log(action.data);
       return {
         ...state,
-        errors: [...action.data]
+        errors: {
+          ...action.data
+        }
       }
     default:
-      return state
+      return {
+        ...state,
+        errors: null
+      }
   }
 }
 
